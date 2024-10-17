@@ -41,6 +41,27 @@ def read_all():
 
         return records
 
+def organize_red_data():
+    fun_id = ['Id']
+    fun_date = ['Date']
+    fun_PKOSA = ['PKOSA']
+    fun_Mbank = ['Mbank']
+    fun_Revolut = ['Revolut']
+    fun_Balance = ['Balance']
+
+    records = read_all()
+    for record in records:
+        row_dict = dict(record._mapping)
+        row_object = row_dict['Balance']
+        fun_id.append(row_object.Id)
+        fun_date.append(row_object.Date)
+        fun_PKOSA.append(row_object.PKOSA)
+        fun_Mbank.append(row_object.Mbank)
+        fun_Revolut.append(row_object.Revolut)
+        fun_Balance.append(row_object.Balance)
+
+    return [fun_id, fun_date, fun_PKOSA, fun_Mbank, fun_Revolut, fun_Balance]
+
 # Create table schema in the database. Requires application context.
 def create_table():
     with app.app_context():
@@ -58,14 +79,20 @@ def create_record(pkosa, mbank, revolut):
 # UPDATE RECORD
 def update_record(position, new_value):
     with app.app_context():
+
         if position[1] == 'PKOSA':
             value_to_update = db.session.execute(db.select(Balance).where(Balance.Id == int(position[0]))).scalar()
+            print(type(new_value))
+            print(type(value_to_update.Balance))
+            value_to_update.Balance = value_to_update.Balance - value_to_update.PKOSA + float(new_value)
             value_to_update.PKOSA = new_value
         elif position[1] == 'Mbank':
             value_to_update = db.session.execute(db.select(Balance).where(Balance.Id == int(position[0]))).scalar()
+            value_to_update.Balance = value_to_update.Balance - value_to_update.Mbank + float(new_value)
             value_to_update.Mbank = new_value
         elif position[1] == 'Revolut':
             value_to_update = db.session.execute(db.select(Balance).where(Balance.Id == int(position[0]))).scalar()
+            value_to_update.Balance = value_to_update.Balance - value_to_update.Revolut + float(new_value)
             value_to_update.Revolut = new_value
         else:
             pass
