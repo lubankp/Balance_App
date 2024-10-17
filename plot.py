@@ -25,6 +25,6 @@ def plot(master, data):
     dataframe.plot(kind='line', legend=True, ax=plot1, marker='o', fontsize=10)
     # creating the Matplotlib toolbar
     toolbar_frame = Frame(master)
-    toolbar_frame.grid(column=0, row=1, columnspan=3, sticky='nw')
+    toolbar_frame.grid(column=0, row=1, columnspan=4, sticky='nw')
     toolbar = NavigationToolbar2Tk(canvas_app, toolbar_frame)
     return canvas_app.get_width_height()[1] + toolbar.winfo_reqheight()

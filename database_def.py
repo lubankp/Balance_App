@@ -1,6 +1,4 @@
 import datetime
-
-
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float, DateTime
@@ -73,9 +71,9 @@ def update_record(position, new_value):
             pass
         db.session.commit()
 
-def delete_record(balance_id):
+def delete_record(position):
     with app.app_context():
-        book_to_delete = db.session.execute(db.select(Balance).where(Balance.Id == balance_id)).scalar()
+        book_to_delete = db.session.execute(db.select(Balance).where(Balance.Id == int(position[0]))).scalar()
         db.session.delete(book_to_delete)
         db.session.commit()
 

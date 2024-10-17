@@ -1,11 +1,8 @@
 # Imports
-import pandas as pd
 import table
 import database_def
 from tkinter import *
 from tkinter.ttk import Notebook
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 import plot
 
 
@@ -22,20 +19,19 @@ def create_record():
     data = openNewWindow()
     #newWindow.destroy()
     database_def.create_record(data[0], data[1], data[2])
-    refresh_data()
+    refresh_data('create')
 
 # ---------------------------- Update Record  ------------------------- #
 def update_record():
     input = update_field.get("1.0", END)
     database_def.update_record(t.coords(widget), input)
-    refresh_data()
+    refresh_data('update')
 
 # ---------------------------- Delete Record  ------------------------- #
 def delete_record():
-    database_def.delete_record(1)
 
-    plot.plot(window.main_frame, choose_diag('PKOSA'))
-
+    database_def.delete_record(t.coords(widget))
+    refresh_data('delete')
 
 # ----------------------------- Plot -----------------------------------#
 def read_records():
@@ -107,9 +103,13 @@ def openNewWindow():
 
     return [entry1, entry2, entry3]
 
-def refresh_data():
+def refresh_data(button):
     records = read_records()
-    t.update(records)
+    if button == 'update':
+        t.update(records)
+    elif button == 'delete' or button == 'create':
+        t.delete()
+        t.__init__(window.frame_data, records)
     plot_high = plot.plot(tab1, choose_diag('PKOSA', records[1:]))
     plot.plot(tab2, choose_diag('Mbank', records[1:]))
     plot.plot(tab3, choose_diag('Revolut', records[1:]))
@@ -145,7 +145,7 @@ class MainWindow(Tk):
         self.canvas.config(yscrollcommand=self.vsb.set)
 
         # Create a frame to contain the buttons
-        self.frame_data = Frame(self.canvas, bg="blue")
+        self.frame_data = Frame(self.canvas, bg=BACKGROUND_COLOR)
         self.canvas.create_window((0, 0), window=self.frame_data, anchor='nw')
 
 def print_widget_under_mouse(root):
@@ -156,6 +156,7 @@ def print_widget_under_mouse(root):
         widget = new_widget
         update_field.delete('1.0', END)
         update_field.insert(END, widget.get())
+        print(widget)
 
 
 window = MainWindow()
@@ -173,30 +174,38 @@ tabControl.add(tab1, text='PKOSA')
 tabControl.add(tab2, text='Mbank')
 tabControl.add(tab3, text='Revolut')
 tabControl.add(tab4, text='Balance')
-tabControl.grid(column=1, row=0, columnspan=3)
-
-# Create record
-button_create_record = Button(window.main_frame, text='Create Record', highlightthickness=0, bg='white', command=create_record)
-button_create_record.grid(row=1, column=1, padx=0, pady=10)
-
-# Refresh
-button_refresh = Button(window.main_frame, text='Refresh', highlightthickness=0, bg='white', command=refresh_data)
-button_refresh.grid(row=1, column=2, padx=0, pady=10)
-
-# Delete record
-button_delete_record = Button(window.main_frame, text='Delete Record', highlightthickness=0, bg='white', command=delete_record)
-button_delete_record.grid(row=1, column=3, padx=0, pady=10)
-
-# Update record
-button_update = Button(window.main_frame, text='Update', highlightthickness=0, bg='white', command=update_record)
-button_update.grid(row=3, column=0, padx=0, pady=10)
-
-update_field = Text(window.main_frame, fg='black', width=100, height=3, font=('Arial', 10, 'bold'), bg='white')
-update_field.grid(row=1, column=0, padx=0, pady=10, rowspan=2)
+tabControl.grid(column=1, row=0, columnspan=4)
 
 t = table.Table(window.frame_data, read_records())
 
-refresh_data()
+refresh_data('init')
+
+# Create record button
+button_create_record = Button(window.main_frame, text='Create Record', highlightthickness=0, bg='white', command=create_record)
+button_create_record.grid(row=1, column=1, padx=0, pady=10)
+
+# Refresh button
+button_refresh = Button(window.main_frame, text='Refresh', highlightthickness=0, bg='white', command=refresh_data('refresh'))
+button_refresh.grid(row=1, column=2, padx=0, pady=10)
+
+# Delete record button
+button_delete_record = Button(window.main_frame, text='Delete Record', highlightthickness=0, bg='white', command=delete_record)
+button_delete_record.grid(row=1, column=3, padx=0, pady=10)
+
+# Update record button
+button_update = Button(window.main_frame, text='Update', highlightthickness=0, bg='white', command=update_record)
+button_update.grid(row=3, column=0, padx=0, pady=10)
+
+#Migrate button
+button_migrate = Button(window.main_frame, text='Migrate', highlightthickness=0, bg='white', command=update_record)
+button_migrate.grid(row=1, column=4, padx=0, pady=10)
+
+
+#Field to update
+update_field = Text(window.main_frame, fg='black', width=90, height=3, font=('Arial', 10, 'bold'), bg='white')
+update_field.grid(row=1, column=0, padx=0, pady=10, rowspan=2)
+
+
 window.bind('<Button-1>', lambda event: print_widget_under_mouse(window))
 
 window.mainloop()
