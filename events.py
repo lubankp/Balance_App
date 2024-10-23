@@ -38,7 +38,7 @@ class Events():
         data = create_window.get_values()
 
         database_def.create_record(data[0], data[1], data[2])
-        self.refresh_data(self.window, self.table, 'create')
+        self.refresh_data('create')
         create_window.destroy()
 
     # ---------------------------- Update Record  ------------------------- #

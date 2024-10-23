@@ -21,6 +21,7 @@ class DataBase(SQLAlchemy):
     def __init__(self):
         super().__init__(model_class=Base)
 
+
 db = DataBase()
 db.init_app(app)
 

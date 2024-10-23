@@ -7,9 +7,9 @@ class MainWindow(Tk):
     BACKGROUND_COLOR = "#B1DDC6"
 
     def __init__(self):
-        super().__init__()
+        super().__init__("Balance Application")
         # Init Main Window
-        self.title("Balance Application")
+        # self.title()
         self.config(padx=10, pady=10, bg=self.BACKGROUND_COLOR)
         self.init_main_frame()
         self.init_canvas_frame()

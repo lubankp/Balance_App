@@ -3,7 +3,9 @@ import table
 import main_window
 import events
 import database_def
+import migration
 
+# from IPython.display import display
 
 # Application objects
 window = main_window.MainWindow()
@@ -14,5 +16,7 @@ window.init_buttons(events.create_record, events.refresh_data, events.delete_rec
 events.refresh_data('init')
 
 window.bind('<Button-1>', lambda event: events.widget_under_mouse())
+# migration = migration.Migration('./Saldo.ods')
+# display(migration)
 
 window.mainloop()
