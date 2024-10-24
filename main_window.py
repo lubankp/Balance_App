@@ -62,7 +62,7 @@ class MainWindow(Tk):
         self.tabControl.add(self.tab4, text='Balance')
         self.tabControl.grid(column=1, row=0, columnspan=4)
 
-    def init_buttons(self, create_record, refresh_data, delete_record, update_record):
+    def init_buttons(self, create_record, refresh_data, delete_record, update_record, migration):
 
         # Create record button
         button_create_record = Button(self.main_frame, text='Create Record', highlightthickness=0, bg='white',
@@ -71,7 +71,7 @@ class MainWindow(Tk):
 
         # Refresh button
         button_refresh = Button(self.main_frame, text='Refresh', highlightthickness=0, bg='white',
-                                command=refresh_data('refresh'))
+                                command=refresh_data)
         button_refresh.grid(row=1, column=2, padx=0, pady=10)
 
         # Delete record button
@@ -86,7 +86,7 @@ class MainWindow(Tk):
 
         # Migrate button
         button_migrate = Button(self.main_frame, text='Migrate', highlightthickness=0, bg='white',
-                                command=update_record)
+                                command=migration)
         button_migrate.grid(row=1, column=4, padx=0, pady=10)
 
     def init_update_field(self):

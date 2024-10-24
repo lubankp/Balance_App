@@ -2,6 +2,8 @@ import database_def
 import create_window as cr
 from tkinter import *
 import plot
+import datetime
+import migration
 
 class Events():
 
@@ -37,7 +39,7 @@ class Events():
         create_window = cr.CreateWindow(self.window)
         data = create_window.get_values()
 
-        database_def.create_record(data[0], data[1], data[2])
+        database_def.create_record(datetime.datetime.now(), data[0], data[1], data[2])
         self.refresh_data('create')
         create_window.destroy()
 
@@ -73,3 +75,18 @@ class Events():
             self.widget = new_widget
             self.window.update_field.delete('1.0', END)
             self.window.update_field.insert(END, self.widget.get())
+
+
+    def migration_init(self):
+        migrate = migration.Migration('./Saldo.ods')
+        array = migrate.fix_data()
+        for i in range(self.table.total_rows):
+            self.table.delete()
+        database_def.delete_all()
+        for row in array:
+            datetime_object = datetime.datetime.strptime(row['Date'], '%Y-%m-%d')
+            database_def.create_record(date=datetime_object, pkosa=row['PKOSA'], mbank=row['Mbank'], revolut=row['Revolut'])
+        self.refresh_data('create')
+
+    def refresh(self):
+        self.refresh_data('update')

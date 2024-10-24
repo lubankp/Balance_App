@@ -69,10 +69,10 @@ def create_table():
         db.create_all()
 
 # CREATE RECORD
-def create_record(pkosa, mbank, revolut):
+def create_record(date, pkosa, mbank, revolut):
     with app.app_context():
         balance = pkosa + mbank + revolut
-        new_balance = Balance(Date=datetime.datetime.now(), PKOSA=pkosa, Mbank=mbank, Revolut=revolut,
+        new_balance = Balance(Date=date, PKOSA=pkosa, Mbank=mbank, Revolut=revolut,
                               Balance=balance)
         db.session.add(new_balance)
         db.session.commit()
@@ -83,8 +83,6 @@ def update_record(position, new_value):
 
         if position[1] == 'PKOSA':
             value_to_update = db.session.execute(db.select(Balance).where(Balance.Id == int(position[0]))).scalar()
-            print(type(new_value))
-            print(type(value_to_update.Balance))
             value_to_update.Balance = value_to_update.Balance - value_to_update.PKOSA + float(new_value)
             value_to_update.PKOSA = new_value
         elif position[1] == 'Mbank':
@@ -106,7 +104,10 @@ def delete_record(position):
         db.session.commit()
 
 
-
+def delete_all():
+    with app.app_context():
+        num_rows_deleted = db.session.query(Balance).delete()
+        db.session.commit()
 
 
 
