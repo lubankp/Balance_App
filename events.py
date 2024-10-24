@@ -38,8 +38,9 @@ class Events():
     def create_record(self):
         create_window = cr.CreateWindow(self.window)
         data = create_window.get_values()
-
-        database_def.create_record(datetime.datetime.now(), data[0], data[1], data[2])
+        time_str = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
+        time = datetime.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S')
+        database_def.create_record(time, data[0], data[1], data[2])
         self.refresh_data('create')
         create_window.destroy()
 
