@@ -103,7 +103,6 @@ def delete_record(position):
         db.session.delete(book_to_delete)
         db.session.commit()
 
-
 def delete_all():
     with app.app_context():
         num_rows_deleted = db.session.query(Balance).delete()

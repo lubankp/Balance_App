@@ -5,8 +5,6 @@ import events
 import database_def
 
 
-# from IPython.display import display
-
 # Application objects
 window = main_window.MainWindow()
 events = events.Events(window)

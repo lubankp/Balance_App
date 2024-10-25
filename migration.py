@@ -1,23 +1,18 @@
 from datetime import datetime
-
 import ezodf
 
-
 class Migration():
-
 
     def __init__(self, url):
         self.doc = ezodf.opendoc(url)
         self.sheet = self.doc.sheets[0]
         self.array = []
 
-
     def find_value(self, row, position):
         for i, cell in enumerate(row):
              if i == position:
                  # print('{}, {}'.format(cell.value, type(cell.value)))
                  return cell.value
-
 
     def find_pos(self):
         for row in self.sheet.rows():
@@ -39,7 +34,6 @@ class Migration():
                                     'PKOSA': self.find_value(row, self.pkosa_pos),
                                     'Mbank': self.find_value(row, self.mbank_pos),
                                     'Revolut': self.find_value(row, self.revolut_pos),})
-
         return self.array
 
 
