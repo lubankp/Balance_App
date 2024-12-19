@@ -1,6 +1,8 @@
+# Imports libraries
 from tkinter import *
 
 class Table:
+    """Create Table for data on GUI"""
 
     def __init__(self, root, list):
 
@@ -28,6 +30,8 @@ class Table:
                         self.e[i][j].insert(END, round(float(list[j][i]), 2))
 
     def update(self, list):
+        """Updates row in Table"""
+
         for i in range(self.total_rows):
             for j in range(self.total_columns):
                 self.e[i][j].delete(0, 'end')
@@ -37,12 +41,15 @@ class Table:
                     self.e[i][j].insert(END, round(float(list[j][i]), 2))
 
     def coords(self, widget):
+        """Returns position of widget under mouse"""
+
         for i in range(self.total_rows):
             for j in range(self.total_columns):
                 if self.e[i][j] == widget:
                     return [self.e[i][0].get(), self.e[0][j].get()]
 
     def delete(self):
+        """Delete widgets in Table"""
         for i in range(self.total_rows):
             for j in range(self.total_columns):
                 self.e[i][j].destroy()

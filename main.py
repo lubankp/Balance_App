@@ -1,4 +1,4 @@
-# Imports
+# Imports files
 import table
 import main_window
 import events

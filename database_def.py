@@ -1,3 +1,4 @@
+# Imports libraries and files
 import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -12,21 +13,18 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///balance_database.db"
 
 # Create the extension
-#db = SQLAlchemy(model_class=Base)
-
-# Initialise the app with the extension
-
 class DataBase(SQLAlchemy):
 
     def __init__(self):
         super().__init__(model_class=Base)
 
-
 db = DataBase()
+# Initialise the app with the extension
 db.init_app(app)
 
 ##CREATE TABLE
 class Balance(db.Model):
+    """Creates Model of Database"""
     Id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
     Date: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=False)
     PKOSA: Mapped[float] = mapped_column(Float, nullable=False)
@@ -36,13 +34,14 @@ class Balance(db.Model):
 
 
 def read_all():
+    """Reads all records from Database"""
     with app.app_context():
         result = db.session.execute(db.select(Balance).order_by(Balance.Id))
         records = result.fetchall()
-
         return records
 
 def organize_red_data():
+    """Organizes red data"""
     fun_id = ['Id']
     fun_date = ['Date']
     fun_PKOSA = ['PKOSA']
@@ -63,13 +62,14 @@ def organize_red_data():
 
     return [fun_id, fun_date, fun_PKOSA, fun_Mbank, fun_Revolut, fun_Balance]
 
-# Create table schema in the database. Requires application context.
+
 def create_table():
+    """Create table schema in the database. Requires application context"""
     with app.app_context():
         db.create_all()
 
-# CREATE RECORD
 def create_record(date, pkosa, mbank, revolut):
+    """Creates record and add to Database"""
     with app.app_context():
         balance = pkosa + mbank + revolut
         new_balance = Balance(Date=date, PKOSA=pkosa, Mbank=mbank, Revolut=revolut,
@@ -77,8 +77,9 @@ def create_record(date, pkosa, mbank, revolut):
         db.session.add(new_balance)
         db.session.commit()
 
-# UPDATE RECORD
 def update_record(position, new_value):
+    """Allows to update value in table"""
+
     with app.app_context():
 
         if position[1] == 'PKOSA':
@@ -98,12 +99,15 @@ def update_record(position, new_value):
         db.session.commit()
 
 def delete_record(position):
+    """Deletes record from table"""
+
     with app.app_context():
         book_to_delete = db.session.execute(db.select(Balance).where(Balance.Id == int(position[0]))).scalar()
         db.session.delete(book_to_delete)
         db.session.commit()
 
 def delete_all():
+    """Delete all records from table"""
     with app.app_context():
         num_rows_deleted = db.session.query(Balance).delete()
         db.session.commit()
