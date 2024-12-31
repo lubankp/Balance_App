@@ -89,15 +89,19 @@ class Events():
 
     def migration_init(self):
         """Migrates data from file to database"""
-        migrate = migration.Migration('./Saldo.ods')
-        array = migrate.fix_data()
-        for i in range(self.table.total_rows):
-            self.table.delete()
-        database_def.delete_all()
-        for row in array:
-            datetime_object = datetime.datetime.strptime(row['Date'], '%Y-%m-%d')
-            database_def.create_record(date=datetime_object, pkosa=row['PKOSA'], mbank=row['Mbank'], revolut=row['Revolut'])
-        self.refresh_data('create')
+        try:
+            migrate = migration.Migration('./Saldo.ods')
+        except Exception as e:
+            print("Can not migrate {}".format(e))
+        else:
+            array = migrate.fix_data()
+            for i in range(self.table.total_rows):
+                self.table.delete()
+            database_def.delete_all()
+            for row in array:
+                datetime_object = datetime.datetime.strptime(row['Date'], '%Y-%m-%d')
+                database_def.create_record(date=datetime_object, pkosa=row['PKOSA'], mbank=row['Mbank'], revolut=row['Revolut'])
+            self.refresh_data('create')
 
     def refresh(self):
         """Refresh data in table and diagrams"""

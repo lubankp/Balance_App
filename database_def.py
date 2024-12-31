@@ -5,12 +5,13 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float, DateTime
 from flask import Flask
 
+# Init App
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///balance_database.db"
+
 ##CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///balance_database.db"
 
 # Create the extension
 class DataBase(SQLAlchemy):
@@ -18,8 +19,8 @@ class DataBase(SQLAlchemy):
     def __init__(self):
         super().__init__(model_class=Base)
 
-db = DataBase()
 # Initialise the app with the extension
+db = DataBase()
 db.init_app(app)
 
 ##CREATE TABLE
@@ -32,9 +33,14 @@ class Balance(db.Model):
     Revolut: Mapped[float] = mapped_column(Float, nullable=False)
     Balance: Mapped[float] = mapped_column(Float, nullable=False)
 
+def create_table():
+    """Create table schema in the database. Requires application context"""
+    with app.app_context():
+        db.create_all()
 
 def read_all():
     """Reads all records from Database"""
+
     with app.app_context():
         result = db.session.execute(db.select(Balance).order_by(Balance.Id))
         records = result.fetchall()
@@ -49,24 +55,26 @@ def organize_red_data():
     fun_Revolut = ['Revolut']
     fun_Balance = ['Balance']
 
-    records = read_all()
-    for record in records:
-        row_dict = dict(record._mapping)
-        row_object = row_dict['Balance']
-        fun_id.append(row_object.Id)
-        fun_date.append(row_object.Date)
-        fun_PKOSA.append(row_object.PKOSA)
-        fun_Mbank.append(row_object.Mbank)
-        fun_Revolut.append(row_object.Revolut)
-        fun_Balance.append(row_object.Balance)
+    try:
+        records = read_all()
+    except Exception as e:
+        print("Can not read data from Database")
+        print("Creating Database")
+        create_table()
+        records = read_all()
+    finally:
+        for record in records:
+            row_dict = dict(record._mapping)
+            row_object = row_dict['Balance']
+            fun_id.append(row_object.Id)
+            fun_date.append(row_object.Date)
+            fun_PKOSA.append(row_object.PKOSA)
+            fun_Mbank.append(row_object.Mbank)
+            fun_Revolut.append(row_object.Revolut)
+            fun_Balance.append(row_object.Balance)
 
-    return [fun_id, fun_date, fun_PKOSA, fun_Mbank, fun_Revolut, fun_Balance]
+        return [fun_id, fun_date, fun_PKOSA, fun_Mbank, fun_Revolut, fun_Balance]
 
-
-def create_table():
-    """Create table schema in the database. Requires application context"""
-    with app.app_context():
-        db.create_all()
 
 def create_record(date, pkosa, mbank, revolut):
     """Creates record and add to Database"""
@@ -76,6 +84,7 @@ def create_record(date, pkosa, mbank, revolut):
                               Balance=balance)
         db.session.add(new_balance)
         db.session.commit()
+
 
 def update_record(position, new_value):
     """Allows to update value in table"""
@@ -98,6 +107,7 @@ def update_record(position, new_value):
             pass
         db.session.commit()
 
+
 def delete_record(position):
     """Deletes record from table"""
 
@@ -105,6 +115,7 @@ def delete_record(position):
         book_to_delete = db.session.execute(db.select(Balance).where(Balance.Id == int(position[0]))).scalar()
         db.session.delete(book_to_delete)
         db.session.commit()
+
 
 def delete_all():
     """Delete all records from table"""

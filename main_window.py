@@ -23,14 +23,14 @@ class MainWindow(Tk):
     def init_main_frame(self):
         """Init Main Frame"""
 
-        self.main_frame = Frame(self, width=700, height=600)
+        self.main_frame = Frame(self, width=672, height=600)
         self.main_frame.grid(sticky='news')
         self.main_frame.config(bg=self.BACKGROUND_COLOR)
 
     def init_canvas_frame(self):
         """Init Frame Canvas"""
 
-        self.frame_canvas = Frame(self.main_frame, width=700, height=600)
+        self.frame_canvas = Frame(self.main_frame, width=672, height=600)
         self.frame_canvas.grid(row=0, column=0, pady=(5, 0), sticky='nw')
         self.frame_canvas.grid_rowconfigure(0, weight=1)
         self.frame_canvas.grid_columnconfigure(0, weight=1)
@@ -40,7 +40,7 @@ class MainWindow(Tk):
     def init_canvas(self):
         """Adds a canvas in that Frame Canvas"""
 
-        self.canvas = Canvas(self.frame_canvas, bg="yellow")
+        self.canvas = Canvas(self.frame_canvas, bg=self.BACKGROUND_COLOR)
         self.canvas.grid(row=0, column=0, sticky="news")
 
     def init_scrollbar(self):
